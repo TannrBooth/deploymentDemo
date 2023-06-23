@@ -15,10 +15,10 @@ let rollbar = new Rollbar({
 rollbar.log('Hello world!')
 
 let tryFunc = () => {try {
-    nonExistant();
+    nonExistant(req.body);
 } catch(err) {
     console.log(err);
-    rollbar.error(err);
+    rollbar.error('they broke the internet');
 }}
 
 app.use(express.json())
