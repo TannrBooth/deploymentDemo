@@ -14,12 +14,6 @@ let rollbar = new Rollbar({
 // record a generic message and send it to Rollbar
 rollbar.log('Hello world!')
 
-let tryFunc = () => {try {
-    nonExistant(req.body);
-} catch(err) {
-    console.log(err);
-    rollbar.error('they broke the internet');
-}}
 
 app.use(express.json())
 app.use(cors())
@@ -31,14 +25,22 @@ app.get('/', (req,res) => {
     res.status(200).sendFile(path.join(__dirname,'../public/index.html'))
 })
 
-app.get('/error', tryFunc)
+app.get('/error', (req,res) => {
+    try {
+        nonExistentFunction();
+    } catch (err) {
+        rollbar.error('they broke the internet!')
+    }
+})
 
 app.get('/castle', (req,res) => {
     res.status(200).send('<h1>Welcome to my castle!</h1>')
+    rollbar.critical('Critical error')
 })
 
 app.get('/profile', (req,res) => {
     res.status(200).sendFile(path.join(__dirname,'../public/profile.html'))
+    rollbar.warning(`I'm warning you, sonny`)
 })
 
 app.listen(4000, console.log('Server running on 4000!'))
